@@ -5,6 +5,8 @@ import controller.FileManager;
 import model.EditorEngine;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -18,28 +20,37 @@ public class EditorUI extends JFrame {
     private final EditorEngine engine;
     private final FileManager fileManager;
 
+    // 4. üyenin Observer'ı bu label'a bağlanacak
+    private final JLabel statusBar;
+
     public EditorUI() {
         this.engine = EditorEngine.getInstance();
         this.fileManager = new FileManager();
         this.textArea = new JTextArea();
+        this.statusBar = new JLabel(" Satır: 1  Sütun: 1  |  Değiştirilmedi");
 
         initUI();
         initMenuBar();
         initDocumentListener();
+        initCaretListener();
         initWindowCloseHandler();
     }
 
     private void initUI() {
         setTitle("SimpleEditor - Yeni Dosya");
         setSize(800, 600);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // pencere kapanışı ExitCommand'a yönleniyor
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
 
         textArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
 
+        statusBar.setBorder(BorderFactory.createEtchedBorder());
+        statusBar.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
         add(new JScrollPane(textArea), BorderLayout.CENTER);
+        add(statusBar, BorderLayout.SOUTH);
     }
 
     private void initMenuBar() {
@@ -60,6 +71,8 @@ public class EditorUI extends JFrame {
         JMenu editMenu = new JMenu("Düzenle");
         editMenu.setMnemonic(KeyEvent.VK_U);
 
+        addMenuItem(editMenu, "Geri Al", KeyEvent.VK_Z, new UndoCommand());
+        editMenu.addSeparator();
         addMenuItem(editMenu, "Kes",      KeyEvent.VK_X, new CutCommand(textArea));
         addMenuItem(editMenu, "Kopyala",  KeyEvent.VK_C, new CopyCommand(textArea));
         addMenuItem(editMenu, "Yapıştır", KeyEvent.VK_V, new PasteCommand(textArea));
@@ -82,7 +95,6 @@ public class EditorUI extends JFrame {
         menu.add(item);
     }
 
-    // textArea değiştiğinde engine'i ve başlığı güncelle
     private void initDocumentListener() {
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e)  { onTextChanged(); }
@@ -97,9 +109,24 @@ public class EditorUI extends JFrame {
             ? engine.getCurrentFile().getName()
             : "Yeni Dosya";
         setTitle("SimpleEditor - " + fileName + " *");
+        updateStatusBar();
     }
 
-    // X butonuna tıklandığında kaydedilmemiş değişiklik uyarısı ver
+    // Satır/sütun bilgisini günceller — 4. üyenin Observer'ı da buraya eklenecek
+    private void initCaretListener() {
+        textArea.addCaretListener(e -> updateStatusBar());
+    }
+
+    private void updateStatusBar() {
+        try {
+            int caretPos = textArea.getCaretPosition();
+            int line = textArea.getLineOfOffset(caretPos) + 1;
+            int col  = caretPos - textArea.getLineStartOffset(line - 1) + 1;
+            String mod = engine.isModified() ? "Değiştirildi" : "Değiştirilmedi";
+            statusBar.setText(" Satır: " + line + "  Sütun: " + col + "  |  " + mod);
+        } catch (Exception ignored) {}
+    }
+
     private void initWindowCloseHandler() {
         addWindowListener(new WindowAdapter() {
             @Override
@@ -113,7 +140,12 @@ public class EditorUI extends JFrame {
         return textArea;
     }
 
+    public JLabel getStatusBar() {
+        return statusBar;
+    }
+
     public void updateTitle(String fileName, boolean modified) {
         setTitle("SimpleEditor - " + fileName + (modified ? " *" : ""));
+        updateStatusBar();
     }
 }
