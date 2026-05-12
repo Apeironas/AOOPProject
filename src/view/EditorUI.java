@@ -3,10 +3,9 @@ package view;
 import command.*;
 import controller.FileManager;
 import model.EditorEngine;
+import model.EditorObserver;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -14,28 +13,55 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * OBSERVER TASARIM DESENİ — Ana Pencere (View)
+ *
+ * <p>Java Swing ile oluşturulmuş ana penceredir. Menü, metin alanı
+ * ve durum çubuğunu yönetir. {@link EditorObserver} uygulayarak
+ * {@link EditorEngine}'deki değişiklikleri otomatik yansıtır.</p>
+ *
+ * <p>MVC mimarisinde "View" katmanını temsil eder.</p>
+ *
+ * @author 2. Üye (GUI), 3. Üye (Memento entegrasyonu), 4. Üye (Observer)
+ */
 public class EditorUI extends JFrame {
 
+    /** Kullanıcının metin girdiği alan. */
     private final JTextArea textArea;
+
+    /** Uygulamanın merkezi veri modeli (Singleton). */
     private final EditorEngine engine;
+
+    /** Dosya okuma/yazma işlemlerini yöneten denetleyici. */
     private final FileManager fileManager;
 
-    // 4. üyenin Observer'ı bu label'a bağlanacak
+    /** Satır, sütun ve değişiklik bilgisini gösteren durum çubuğu. */
     private final JLabel statusBar;
 
+    /** Memento kaydı için bir önceki metin durumu. */
+    private String lastTextSnapshot;
+
+    /**
+     * EditorUI penceresini oluşturur ve tüm bileşenleri başlatır.
+     */
     public EditorUI() {
-        this.engine = EditorEngine.getInstance();
-        this.fileManager = new FileManager();
-        this.textArea = new JTextArea();
-        this.statusBar = new JLabel(" Satır: 1  Sütun: 1  |  Değiştirilmedi");
+        this.engine           = EditorEngine.getInstance();
+        this.fileManager      = new FileManager();
+        this.textArea         = new JTextArea();
+        this.statusBar        = new JLabel(" Satır: 1  Sütun: 1  |  Değiştirilmedi");
+        this.lastTextSnapshot = "";
 
         initUI();
         initMenuBar();
         initDocumentListener();
         initCaretListener();
         initWindowCloseHandler();
+        initObserver();
     }
 
+    /**
+     * Pencerenin genel düzenini ve temel bileşenlerini kurar.
+     */
     private void initUI() {
         setTitle("SimpleEditor - Yeni Dosya");
         setSize(800, 600);
@@ -53,6 +79,9 @@ public class EditorUI extends JFrame {
         add(statusBar, BorderLayout.SOUTH);
     }
 
+    /**
+     * Menü çubuğunu oluşturur; tüm komutları kısayol tuşlarıyla bağlar.
+     */
     private void initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
@@ -71,7 +100,8 @@ public class EditorUI extends JFrame {
         JMenu editMenu = new JMenu("Düzenle");
         editMenu.setMnemonic(KeyEvent.VK_U);
 
-        addMenuItem(editMenu, "Geri Al", KeyEvent.VK_Z, new UndoCommand());
+        addMenuItem(editMenu, "Geri Al",  KeyEvent.VK_Z, new UndoCommand(engine, textArea, this));
+        addMenuItem(editMenu, "Yinele",   KeyEvent.VK_Y, new RedoCommand(engine, textArea, this));
         editMenu.addSeparator();
         addMenuItem(editMenu, "Kes",      KeyEvent.VK_X, new CutCommand(textArea));
         addMenuItem(editMenu, "Kopyala",  KeyEvent.VK_C, new CopyCommand(textArea));
@@ -84,6 +114,9 @@ public class EditorUI extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    /**
+     * Menüye öğe ekler ve tıklandığında komutun execute() metodunu çağırır.
+     */
     private void addMenuItem(JMenu menu, String label, int keyCode, Command command) {
         JMenuItem item = new JMenuItem(label);
         item.addActionListener(e -> command.execute());
@@ -95,14 +128,43 @@ public class EditorUI extends JFrame {
         menu.add(item);
     }
 
+    /**
+     * Metin değişikliklerini dinler.
+     * Memento kaydı kelime sınırlarında (boşluk, enter vb.) yapılır.
+     */
     private void initDocumentListener() {
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e)  { onTextChanged(); }
             @Override public void removeUpdate(DocumentEvent e)  { onTextChanged(); }
             @Override public void changedUpdate(DocumentEvent e) { onTextChanged(); }
         });
+
+        // Memento kaydını kelime sınırlarında yap (her karakterde değil)
+        textArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                int k = e.getKeyCode();
+                boolean isWordBoundary =
+                                k == KeyEvent.VK_SPACE      ||
+                                k == KeyEvent.VK_ENTER      ||
+                                k == KeyEvent.VK_BACK_SPACE ||
+                                k == KeyEvent.VK_DELETE     ||
+                                k == KeyEvent.VK_PERIOD     ||
+                                k == KeyEvent.VK_COMMA      ||
+                                k == KeyEvent.VK_X          ||
+                                k == KeyEvent.VK_V;
+
+                if (isWordBoundary) {
+                    engine.recordSnapshot(lastTextSnapshot);
+                    lastTextSnapshot = textArea.getText();
+                }
+            }
+        });
     }
 
+    /**
+     * Metin değiştiğinde başlığı ve durum çubuğunu günceller.
+     */
     private void onTextChanged() {
         engine.setCurrentText(textArea.getText());
         String fileName = engine.getCurrentFile() != null
@@ -112,11 +174,16 @@ public class EditorUI extends JFrame {
         updateStatusBar();
     }
 
-    // Satır/sütun bilgisini günceller — 4. üyenin Observer'ı da buraya eklenecek
+    /**
+     * İmleç konumu değiştikçe durum çubuğunu günceller.
+     */
     private void initCaretListener() {
         textArea.addCaretListener(e -> updateStatusBar());
     }
 
+    /**
+     * Durum çubuğunu güncel satır, sütun ve değişiklik bilgisiyle günceller.
+     */
     private void updateStatusBar() {
         try {
             int caretPos = textArea.getCaretPosition();
@@ -127,6 +194,9 @@ public class EditorUI extends JFrame {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Pencere kapatma butonuna basıldığında ExitCommand çalıştırır.
+     */
     private void initWindowCloseHandler() {
         addWindowListener(new WindowAdapter() {
             @Override
@@ -136,14 +206,43 @@ public class EditorUI extends JFrame {
         });
     }
 
-    public JTextArea getTextArea() {
-        return textArea;
+    /**
+     * OBSERVER TASARIM DESENİ — EditorEngine'e gözlemci kaydeder.
+     * Engine'deki her değişiklikte başlık ve durum çubuğu otomatik güncellenir.
+     */
+    private void initObserver() {
+        engine.addObserver(new EditorObserver() {
+            @Override
+            public void onEngineStateChanged(EditorEngine eng) {
+                String fileName = eng.getCurrentFile() != null
+                    ? eng.getCurrentFile().getName()
+                    : "Yeni Dosya";
+                setTitle("SimpleEditor - " + fileName + (eng.isModified() ? " *" : ""));
+                updateStatusBar();
+                // Undo/Redo sonrası metni güncelle (sonsuz döngüyü önle)
+                if (!textArea.getText().equals(eng.getCurrentText())) {
+                    textArea.setText(eng.getCurrentText());
+                    lastTextSnapshot = textArea.getText();
+                }
+            }
+        });
     }
 
-    public JLabel getStatusBar() {
-        return statusBar;
-    }
+    /**
+     * @return metin alanı bileşeni
+     */
+    public JTextArea getTextArea() { return textArea; }
 
+    /**
+     * @return durum çubuğu bileşeni
+     */
+    public JLabel getStatusBar() { return statusBar; }
+
+    /**
+     * Pencere başlığını ve durum çubuğunu günceller.
+     * @param fileName gösterilecek dosya adı
+     * @param modified değiştirilmişse true
+     */
     public void updateTitle(String fileName, boolean modified) {
         setTitle("SimpleEditor - " + fileName + (modified ? " *" : ""));
         updateStatusBar();

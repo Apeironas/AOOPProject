@@ -6,20 +6,51 @@ import model.EditorEngine;
 import javax.swing.*;
 import java.io.File;
 
+/**
+ * COMMAND TASARIM DESENİ — Dosya Aç Komutu
+ *
+ * <p>Dosya seçim diyaloğu açarak kullanıcının seçtiği dosyayı okur
+ * ve içeriğini metin alanına yükler. Kaydedilmemiş değişiklik varsa
+ * önce kullanıcıya onay sorar.</p>
+ *
+ * <p>Dosya açma işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
+ *
+ * @author 1. Üye
+ */
 public class OpenCommand implements Command {
 
+    /** Uygulamanın merkezi veri modeli. */
     private final EditorEngine engine;
+
+    /** Dosya okuma işlemini yöneten denetleyici. */
     private final FileManager fileManager;
+
+    /** İçeriğin yükleneceği metin alanı. */
     private final JTextArea textArea;
+
+    /** Başlığı güncellenecek ana pencere. */
     private final JFrame frame;
 
+    /**
+     * OpenCommand oluşturur.
+     *
+     * @param engine      uygulama veri modeli
+     * @param fileManager dosya işlemleri denetleyicisi
+     * @param textArea    içeriğin yükleneceği metin alanı
+     * @param frame       ana pencere
+     */
     public OpenCommand(EditorEngine engine, FileManager fileManager, JTextArea textArea, JFrame frame) {
-        this.engine = engine;
+        this.engine      = engine;
         this.fileManager = fileManager;
-        this.textArea = textArea;
-        this.frame = frame;
+        this.textArea    = textArea;
+        this.frame       = frame;
     }
 
+    /**
+     * Dosya seçim diyaloğunu açar; seçilen dosyayı okuyarak
+     * metin alanına yükler ve pencere başlığını günceller.
+     * Hata durumunda kullanıcıya mesaj gösterir.
+     */
     @Override
     public void execute() {
         if (engine.isModified()) {
@@ -45,6 +76,9 @@ public class OpenCommand implements Command {
         }
     }
 
+    /**
+     * Dosya açma işlemi geri alınamaz.
+     */
     @Override
     public void undo() {
         // Dosya açma işlemi geri alınamaz
