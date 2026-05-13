@@ -16,11 +16,15 @@ import java.awt.event.WindowEvent;
 /**
  * OBSERVER TASARIM DESENİ — Ana Pencere (View)
  *
- * <p>Java Swing ile oluşturulmuş ana penceredir. Menü, metin alanı
+ * <p>
+ * Java Swing ile oluşturulmuş ana penceredir. Menü, metin alanı
  * ve durum çubuğunu yönetir. {@link EditorObserver} uygulayarak
- * {@link EditorEngine}'deki değişiklikleri otomatik yansıtır.</p>
+ * {@link EditorEngine}'deki değişiklikleri otomatik yansıtır.
+ * </p>
  *
- * <p>MVC mimarisinde "View" katmanını temsil eder.</p>
+ * <p>
+ * MVC mimarisinde "View" katmanını temsil eder.
+ * </p>
  *
  * @author 2. Üye (GUI), 3. Üye (Memento entegrasyonu), 4. Üye (Observer)
  */
@@ -48,10 +52,10 @@ public class EditorUI extends JFrame {
      * EditorUI penceresini oluşturur ve tüm bileşenleri başlatır.
      */
     public EditorUI() {
-        this.engine           = EditorEngine.getInstance();
-        this.fileManager      = new FileManager();
-        this.textArea         = new JTextArea();
-        this.statusBar        = new JLabel(" Satır: 1  Sütun: 1  |  Değiştirilmedi");
+        this.engine = EditorEngine.getInstance();
+        this.fileManager = new FileManager();
+        this.textArea = new JTextArea();
+        this.statusBar = new JLabel(" Satır: 1  Sütun: 1  |  Değiştirilmedi");
         this.lastTextSnapshot = "";
 
         initUI();
@@ -88,9 +92,20 @@ public class EditorUI extends JFrame {
 
         // Metin değişince satır numaralarını güncelle
         textArea.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e)  { updateLineNumbers(lineNumbers); }
-            @Override public void removeUpdate(DocumentEvent e)  { updateLineNumbers(lineNumbers); }
-            @Override public void changedUpdate(DocumentEvent e) { updateLineNumbers(lineNumbers); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateLineNumbers(lineNumbers);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateLineNumbers(lineNumbers);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateLineNumbers(lineNumbers);
+            }
         });
 
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -109,25 +124,25 @@ public class EditorUI extends JFrame {
         JMenu fileMenu = new JMenu("Dosya");
         fileMenu.setMnemonic(KeyEvent.VK_D);
 
-        addMenuItem(fileMenu, "Yeni",             KeyEvent.VK_N, new NewCommand(engine, textArea, this));
-        addMenuItem(fileMenu, "Aç...",            KeyEvent.VK_O, new OpenCommand(engine, fileManager, textArea, this));
-        addMenuItem(fileMenu, "Kaydet",           KeyEvent.VK_S, new SaveCommand(engine, fileManager, textArea, this));
-        addMenuItem(fileMenu, "Farklı Kaydet...", -1,            new SaveAsCommand(engine, fileManager, textArea, this));
+        addMenuItem(fileMenu, "Yeni", KeyEvent.VK_N, new NewCommand(engine, textArea, this));
+        addMenuItem(fileMenu, "Aç...", KeyEvent.VK_O, new OpenCommand(engine, fileManager, textArea, this));
+        addMenuItem(fileMenu, "Kaydet", KeyEvent.VK_S, new SaveCommand(engine, fileManager, textArea, this));
+        addMenuItem(fileMenu, "Farklı Kaydet...", -1, new SaveAsCommand(engine, fileManager, textArea, this));
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, "Çıkış",            KeyEvent.VK_Q, new ExitCommand(engine, this));
+        addMenuItem(fileMenu, "Çıkış", KeyEvent.VK_Q, new ExitCommand(engine, this));
 
         // --- Düzenle Menüsü ---
         JMenu editMenu = new JMenu("Düzenle");
         editMenu.setMnemonic(KeyEvent.VK_U);
 
-        addMenuItem(editMenu, "Geri Al",  KeyEvent.VK_Z, new UndoCommand(engine, textArea, this));
-        addMenuItem(editMenu, "Yinele",   KeyEvent.VK_Y, new RedoCommand(engine, textArea, this));
+        addMenuItem(editMenu, "Geri Al", KeyEvent.VK_Z, new UndoCommand(engine, textArea, this));
+        addMenuItem(editMenu, "Yinele", KeyEvent.VK_Y, new RedoCommand(engine, textArea, this));
         editMenu.addSeparator();
-        addMenuItem(editMenu, "Kes",      KeyEvent.VK_X, new CutCommand(textArea));
-        addMenuItem(editMenu, "Kopyala",  KeyEvent.VK_C, new CopyCommand(textArea));
+        addMenuItem(editMenu, "Kes", KeyEvent.VK_X, new CutCommand(textArea));
+        addMenuItem(editMenu, "Kopyala", KeyEvent.VK_C, new CopyCommand(textArea));
         addMenuItem(editMenu, "Yapıştır", KeyEvent.VK_V, new PasteCommand(textArea));
         editMenu.addSeparator();
-        addMenuItem(editMenu, "Bul...",   KeyEvent.VK_F, new FindCommand(engine, textArea));
+        addMenuItem(editMenu, "Bul...", KeyEvent.VK_F, new FindCommand(engine, textArea));
 
         // --- Görünüm Menüsü ---
         JMenu viewMenu = new JMenu("Görünüm");
@@ -146,12 +161,14 @@ public class EditorUI extends JFrame {
 
         // Font Büyüt
         JMenuItem fontUp = new JMenuItem("Yazıyı Büyüt");
-        fontUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, java.awt.event.InputEvent.CTRL_DOWN_MASK));        fontUp.addActionListener(e -> changeFontSize(2));
+        fontUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        fontUp.addActionListener(e -> changeFontSize(2));
         viewMenu.add(fontUp);
 
         // Font Küçült
         JMenuItem fontDown = new JMenuItem("Yazıyı Küçült");
-        fontDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, java.awt.event.InputEvent.CTRL_DOWN_MASK));        fontDown.addActionListener(e -> changeFontSize(-2));
+        fontDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        fontDown.addActionListener(e -> changeFontSize(-2));
         viewMenu.add(fontDown);
 
         menuBar.add(viewMenu);
@@ -169,8 +186,7 @@ public class EditorUI extends JFrame {
         item.addActionListener(e -> command.execute());
         if (keyCode != -1) {
             item.setAccelerator(
-                KeyStroke.getKeyStroke(keyCode, java.awt.event.InputEvent.CTRL_DOWN_MASK)
-            );
+                    KeyStroke.getKeyStroke(keyCode, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         }
         menu.add(item);
     }
@@ -181,9 +197,20 @@ public class EditorUI extends JFrame {
      */
     private void initDocumentListener() {
         textArea.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e)  { onTextChanged(); }
-            @Override public void removeUpdate(DocumentEvent e)  { onTextChanged(); }
-            @Override public void changedUpdate(DocumentEvent e) { onTextChanged(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                onTextChanged();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                onTextChanged();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                onTextChanged();
+            }
         });
 
         // Memento kaydını kelime sınırlarında yap (her karakterde değil)
@@ -191,15 +218,14 @@ public class EditorUI extends JFrame {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
                 int k = e.getKeyCode();
-                boolean isWordBoundary =
-                                k == KeyEvent.VK_SPACE      ||
-                                k == KeyEvent.VK_ENTER      ||
-                                k == KeyEvent.VK_BACK_SPACE ||
-                                k == KeyEvent.VK_DELETE     ||
-                                k == KeyEvent.VK_PERIOD     ||
-                                k == KeyEvent.VK_COMMA      ||
-                                k == KeyEvent.VK_X          ||
-                                k == KeyEvent.VK_V;
+                boolean isWordBoundary = k == KeyEvent.VK_SPACE ||
+                        k == KeyEvent.VK_ENTER ||
+                        k == KeyEvent.VK_BACK_SPACE ||
+                        k == KeyEvent.VK_DELETE ||
+                        k == KeyEvent.VK_PERIOD ||
+                        k == KeyEvent.VK_COMMA ||
+                        k == KeyEvent.VK_X ||
+                        k == KeyEvent.VK_V;
 
                 if (isWordBoundary) {
                     engine.recordSnapshot(lastTextSnapshot);
@@ -215,8 +241,8 @@ public class EditorUI extends JFrame {
     private void onTextChanged() {
         engine.setCurrentText(textArea.getText());
         String fileName = engine.getCurrentFile() != null
-            ? engine.getCurrentFile().getName()
-            : "Yeni Dosya";
+                ? engine.getCurrentFile().getName()
+                : "Yeni Dosya";
         setTitle("SimpleEditor - " + fileName + " *");
         updateStatusBar();
     }
@@ -235,11 +261,13 @@ public class EditorUI extends JFrame {
         try {
             int caretPos = textArea.getCaretPosition();
             int line = textArea.getLineOfOffset(caretPos) + 1;
-            int col  = caretPos - textArea.getLineStartOffset(line - 1) + 1;
+            int col = caretPos - textArea.getLineStartOffset(line - 1) + 1;
             String mod = engine.isModified() ? "Değiştirildi" : "Değiştirilmedi";
             statusBar.setText(" Satır: " + line + "  Sütun: " + col + "  |  " + mod);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
+
     /**
      * Satır numaralarını günceller.
      */
@@ -251,8 +279,10 @@ public class EditorUI extends JFrame {
         }
         lineNumbers.setText(sb.toString());
     }
+
     /**
      * Koyu veya açık temayı uygular.
+     * 
      * @param theme "Dark" veya "Light"
      */
     private void applyTheme(String theme) {
@@ -279,15 +309,19 @@ public class EditorUI extends JFrame {
             lineNumbers.setForeground(new Color(120, 120, 120));
         }
     }
+
     /**
      * Font boyutunu değiştirir.
+     * 
      * @param delta artış veya azalış miktarı (punto)
      */
     private void changeFontSize(int delta) {
         int newSize = engine.getFontSize() + delta;
-        if (newSize < 8 || newSize > 72) return;
+        if (newSize < 8 || newSize > 72)
+            return;
         engine.setFontSize(newSize);
         textArea.setFont(new Font(engine.getFontFamily(), Font.PLAIN, newSize));
+        lineNumbers.setFont(new Font("Monospaced", Font.PLAIN, newSize));
     }
 
     /**
@@ -311,8 +345,8 @@ public class EditorUI extends JFrame {
             @Override
             public void onEngineStateChanged(EditorEngine eng) {
                 String fileName = eng.getCurrentFile() != null
-                    ? eng.getCurrentFile().getName()
-                    : "Yeni Dosya";
+                        ? eng.getCurrentFile().getName()
+                        : "Yeni Dosya";
                 setTitle("SimpleEditor - " + fileName + (eng.isModified() ? " *" : ""));
                 updateStatusBar();
                 // Undo/Redo sonrası metni güncelle (sonsuz döngüyü önle)
@@ -327,15 +361,20 @@ public class EditorUI extends JFrame {
     /**
      * @return metin alanı bileşeni
      */
-    public JTextArea getTextArea() { return textArea; }
+    public JTextArea getTextArea() {
+        return textArea;
+    }
 
     /**
      * @return durum çubuğu bileşeni
      */
-    public JLabel getStatusBar() { return statusBar; }
+    public JLabel getStatusBar() {
+        return statusBar;
+    }
 
     /**
      * Pencere başlığını ve durum çubuğunu günceller.
+     * 
      * @param fileName gösterilecek dosya adı
      * @param modified değiştirilmişse true
      */
