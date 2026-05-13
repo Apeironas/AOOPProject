@@ -5,18 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SINGLETON + OBSERVER TASARIM DESENİ — Merkezi Veri Modeli
- *
- * <p>Uygulamanın tek ve merkezi veri deposudur. Metin içeriği,
- * dosya durumu ve kullanıcı tercihlerini (font, tema) yönetir.</p>
- *
- * <p>Singleton Pattern: tüm sınıflar {@link #getInstance()} ile
- * aynı nesneye erişir.</p>
- *
- * <p>Observer Pattern: durum değişikliklerinde kayıtlı
- * {@link EditorObserver}'lar otomatik bilgilendirilir.</p>
- *
- * @author 1. Üye (Singleton), 4. Üye (Observer + UndoHistory entegrasyonu)
+ * SINGLETON + OBSERVER TASARIM DESENİ
+ * Uygulamanın tek ve merkezi veri deposudur. Metin içeriği,
+ * dosya durumu ve kullanıcı tercihlerini (font, tema) yönetir.
+ * Singleton Pattern: tüm sınıflar getInstance()} ile
+ * aynı nesneye erişir.
+ * 
+ * Observer Pattern: durum değişikliklerinde kayıtlı
+ * EditorObserver'lar otomatik bilgilendirilir.
  */
 public class EditorEngine {
 
@@ -34,65 +30,67 @@ public class EditorEngine {
     // Observer listesi
     private final List<EditorObserver> observers;
 
-    // Konfigürasyon Ayarları
+    // GUI Ayarları
     private int fontSize;
     private String theme;
     private String fontFamily;
 
     private EditorEngine() {
-        this.currentText  = "";
-        this.currentFile  = null;
-        this.isModified   = false;
-        this.undoHistory  = new UndoHistory(200);
-        this.redoHistory  = new UndoHistory(200);
-        this.observers    = new ArrayList<>();
-        this.fontSize     = 12;
-        this.theme        = "Light";
-        this.fontFamily   = "Monospaced";
+        this.currentText = "";
+        this.currentFile = null;
+        this.isModified = false;
+        this.undoHistory = new UndoHistory(200);
+        this.redoHistory = new UndoHistory(200);
+        this.observers = new ArrayList<>();
+        this.fontSize = 12;
+        this.theme = "Light";
+        this.fontFamily = "Monospaced";
     }
 
-    /**
-     * Thread-safe Singleton erişimi.
-     *
-     * @return tek EditorEngine örneği
-     */
+    // Thread-safe Singleton erişimi.
+    // tek EditorEngine örneği
     public static synchronized EditorEngine getInstance() {
-        if (instance == null) instance = new EditorEngine();
+        if (instance == null)
+            instance = new EditorEngine();
         return instance;
     }
 
-    // --- Metin ve Dosya Getter/Setter ---
+    // Getter/Setter
 
-    /** @return güncel metin içeriği */
-    public String getCurrentText() { return currentText; }
+    // @return güncel metin içeriği
+    public String getCurrentText() {
+        return currentText;
+    }
 
-    /**
-     * Metin içeriğini günceller ve Observer'ları bilgilendirir.
-     * @param text yeni metin
-     */
+    // Metin içeriğini günceller ve Observer'ları bilgilendirir.
+
     public void setCurrentText(String text) {
         this.currentText = text;
-        this.isModified  = true;
+        this.isModified = true;
         notifyObservers();
     }
 
-    /** @return açık dosya; henüz kaydedilmemişse {@code null} */
-    public File getCurrentFile() { return currentFile; }
+    // return current file ; henüz kaydedilmemişse null
+    public File getCurrentFile() {
+        return currentFile;
+    }
 
     public void setCurrentFile(File file) {
         this.currentFile = file;
         notifyObservers();
     }
 
-    /** @return kaydedilmemiş değişiklik varsa {@code true} */
-    public boolean isModified() { return isModified; }
+    // kaydedilmemiş değişiklik varsa true
+    public boolean isModified() {
+        return isModified;
+    }
 
     public void setModified(boolean modified) {
         this.isModified = modified;
         notifyObservers();
     }
 
-    // --- Memento (Undo/Redo) API ---
+    // Memento (Undo/Redo)
 
     /**
      * Değişiklik öncesi metin durumunu undo yığınına kaydeder.
@@ -106,10 +104,14 @@ public class EditorEngine {
     }
 
     /** @return geri alınabilecek kayıt varsa {@code true} */
-    public boolean canUndo() { return undoHistory.canUndo(); }
+    public boolean canUndo() {
+        return undoHistory.canUndo();
+    }
 
     /** @return yinelenebilecek kayıt varsa {@code true} */
-    public boolean canRedo() { return redoHistory.canUndo(); }
+    public boolean canRedo() {
+        return redoHistory.canUndo();
+    }
 
     /**
      * Bir önceki duruma döner (Undo).
@@ -120,10 +122,11 @@ public class EditorEngine {
      */
     public String undoText(String currentTextFallback) {
         String previous = undoHistory.pop();
-        if (previous == null) return currentTextFallback;
+        if (previous == null)
+            return currentTextFallback;
         redoHistory.push(this.currentText);
         this.currentText = previous;
-        this.isModified  = true;
+        this.isModified = true;
         notifyObservers();
         return previous;
     }
@@ -137,10 +140,11 @@ public class EditorEngine {
      */
     public String redoText(String currentTextFallback) {
         String next = redoHistory.pop();
-        if (next == null) return currentTextFallback;
+        if (next == null)
+            return currentTextFallback;
         undoHistory.push(this.currentText);
         this.currentText = next;
-        this.isModified  = true;
+        this.isModified = true;
         notifyObservers();
         return next;
     }
@@ -155,6 +159,7 @@ public class EditorEngine {
 
     /**
      * Observer kaydeder.
+     * 
      * @param observer eklenecek gözlemci
      */
     public void addObserver(EditorObserver observer) {
@@ -169,25 +174,37 @@ public class EditorEngine {
 
     private void notifyObservers() {
         for (EditorObserver o : new ArrayList<>(observers)) {
-            try { o.onEngineStateChanged(this); } catch (Exception ignored) {}
+            try {
+                o.onEngineStateChanged(this);
+            } catch (Exception ignored) {
+            }
         }
     }
 
-    // --- Konfigürasyon Getter/Setter ---
+    // GUI Settings Getter/Setter
 
-    public int getFontSize()    { return fontSize; }
+    public int getFontSize() {
+        return fontSize;
+    }
+
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
         notifyObservers();
     }
 
-    public String getTheme()    { return theme; }
+    public String getTheme() {
+        return theme;
+    }
+
     public void setTheme(String theme) {
         this.theme = theme;
         notifyObservers();
     }
 
-    public String getFontFamily() { return fontFamily; }
+    public String getFontFamily() {
+        return fontFamily;
+    }
+
     public void setFontFamily(String fontFamily) {
         this.fontFamily = fontFamily;
         notifyObservers();

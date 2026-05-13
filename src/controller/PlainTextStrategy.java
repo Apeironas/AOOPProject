@@ -6,23 +6,21 @@ import java.nio.file.Files;
 /**
  * STRATEGY TASARIM DESENİ — Düz Metin Stratejisi
  *
- * <p>{@link FileStrategy} arayüzünün düz metin (.txt) formatı için
- * somut gerçekleştirimidir. Dosyaları UTF-8 kodlamasıyla okur ve yazar.</p>
+ * FileStrategy arayüzünün düz metin (.txt) formatı için
+ * somut gerçekleştirimidir. Dosyaları UTF-8 kodlamasıyla okur ve yazar.
  *
- * <p>Farklı bir format (RTF, şifreli, XML vb.) desteklenmek istenirse
- * bu sınıfa dokunmadan yeni bir {@link FileStrategy} gerçekleştirimi yazılır.</p>
- *
- * @author 1. Üye
+ * Farklı bir format (RTF, şifreli, XML vb.) desteklenmek istenirse
+ * bu sınıfa dokunmadan yeni bir FileStrategy gerçekleştirimi yazılır.
  */
 public class PlainTextStrategy implements FileStrategy {
 
     /**
      * Verilen içeriği düz metin formatında belirtilen dosyaya yazar.
-     * {@link BufferedWriter} kullanılarak performanslı yazma sağlanır.
+     * BufferedWriter kullanılarak performanslı yazma sağlanır.
      *
-     * @param file    yazılacak hedef dosya
-     * @param content kaydedilecek metin içeriği
-     * @throws IOException yazma işlemi başarısız olursa fırlatılır
+     * file yazılacak hedef dosya
+     * content kaydedilecek metin içeriği
+     * IOException yazma işlemi başarısız olursa fırlatılır
      */
     @Override
     public void save(File file, String content) throws IOException {
@@ -33,11 +31,11 @@ public class PlainTextStrategy implements FileStrategy {
 
     /**
      * Belirtilen düz metin dosyasını okur ve içeriğini String olarak döndürür.
-     * {@code java.nio.file.Files} kullanılarak tüm içerik tek seferde okunur.
+     * java.nio.file.Files} kullanılarak tüm içerik tek seferde okunur.
      *
-     * @param file okunacak kaynak dosya
-     * @return dosyanın metin içeriği
-     * @throws IOException okuma işlemi başarısız olursa fırlatılır
+     * file okunacak kaynak dosya
+     * return dosyanın metin içeriği
+     * IOException okuma işlemi başarısız olursa fırlatılır
      */
     @Override
     public String load(File file) throws IOException {

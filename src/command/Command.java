@@ -4,6 +4,8 @@ package command;
  * COMMAND TASARIM DESENİ — Komut Arayüzü
  * Uygulamadaki tüm işlemlerin (aç, kaydet, kes, kopyala vb.) uygulaması
  * gereken temel arayüzdür. Her somut komut sınıfı bu arayüzü uygular.
+ * Bu yapı sayesinde {@link view.EditorUI} hangi komutu çalıştırdığını
+ * bilmek zorunda kalmaz; sadece {@code execute()} çağırır.
  */
 public interface Command {
 
