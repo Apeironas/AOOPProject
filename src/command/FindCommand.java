@@ -9,7 +9,7 @@ import javax.swing.*;
  * Metin alanı içinde anahtar kelime araması yapar.
  * Kullanıcıdan aranacak kelimeyi alır, büyük/küçük harf duyarsız biçimde
  * arar ve bulduğu ilk eşleşmeyi seçili hale getirir.
- * Arama işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.
+ * Arama işlemi geri alınamaz;
  */
 public class FindCommand implements Command {
 
