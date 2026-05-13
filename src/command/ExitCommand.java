@@ -6,21 +6,14 @@ import javax.swing.*;
 
 /**
  * COMMAND TASARIM DESENİ — Çıkış Komutu
- *
- * <p>Uygulamayı kapatır. Kaydedilmemiş değişiklik varsa
- * kullanıcıya onay sorar; kullanıcı vazgeçerse çıkış iptal edilir.</p>
- *
- * <p>Çıkış işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
- *
- * @author 2. Üye
+ * Uygulamayı kapatır. Kaydedilmemiş değişiklik varsa
+ * kullanıcıya onay sorar; kullanıcı vazgeçerse çıkış iptal edilir.
+ * Çıkış işlemi geri alınamaz.
  */
 public class ExitCommand implements Command {
 
-    /** Kaydedilmemiş değişiklik kontrolü için veri modeli. */
-    private final EditorEngine engine;
-
-    /** Onay diyaloğunun gösterileceği ana pencere. */
-    private final JFrame frame;
+    private final EditorEngine engine; // Kaydedilmemiş değişiklik kontrolü için veri modeli
+    private final JFrame frame; // Onay diyaloğunun gösterileceği ana pencere
 
     /**
      * ExitCommand oluşturur.
@@ -30,7 +23,7 @@ public class ExitCommand implements Command {
      */
     public ExitCommand(EditorEngine engine, JFrame frame) {
         this.engine = engine;
-        this.frame  = frame;
+        this.frame = frame;
     }
 
     /**
@@ -41,12 +34,12 @@ public class ExitCommand implements Command {
     public void execute() {
         if (engine.isModified()) {
             int choice = JOptionPane.showConfirmDialog(
-                frame,
-                "Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?",
-                "Çıkış",
-                JOptionPane.YES_NO_OPTION
-            );
-            if (choice != JOptionPane.YES_OPTION) return;
+                    frame,
+                    "Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?",
+                    "Çıkış",
+                    JOptionPane.YES_NO_OPTION);
+            if (choice != JOptionPane.YES_OPTION)
+                return;
         }
         System.exit(0);
     }

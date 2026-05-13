@@ -4,18 +4,13 @@ import javax.swing.*;
 
 /**
  * COMMAND TASARIM DESENİ — Kes Komutu
- *
- * <p>Seçili metni panoya taşır (kes). {@link JTextArea}'nın yerleşik
- * {@code cut()} metodu kullanılır.</p>
- *
- * <p>{@code undo()} çağrıldığında panodaki metin geri yapıştırılır.</p>
- *
- * @author 2. Üye
+ * Seçili metni panoya taşır (kes). {@link JTextArea}'nın yerleşik
+ * {@code cut()} metodu kullanılır.
+ * {@code undo()} çağrıldığında panodaki metin geri yapıştırılır.
  */
 public class CutCommand implements Command {
 
-    /** Kesme işleminin yapılacağı metin alanı. */
-    private final JTextArea textArea;
+    private final JTextArea textArea; // Kesme işleminin yapılacağı metin alanı
 
     /**
      * CutCommand oluşturur.

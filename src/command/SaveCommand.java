@@ -7,27 +7,16 @@ import javax.swing.*;
 
 /**
  * COMMAND TASARIM DESENİ — Kaydet Komutu
- *
- * <p>Mevcut belgeyi daha önce belirlenen dosya yoluna kaydeder.
- * Dosya yolu henüz belirlenmemişse {@link SaveAsCommand}'a yönlendirir.</p>
- *
- * <p>Kaydetme işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
- *
- * @author 1. Üye
+ * Mevcut belgeyi daha önce belirlenen dosya yoluna kaydeder.
+ * Dosya yolu henüz belirlenmemişse {@link SaveAsCommand}'a yönlendirir.
+ * Kaydetme işlemi geri alınamaz.
  */
 public class SaveCommand implements Command {
 
-    /** Uygulamanın merkezi veri modeli. */
-    private final EditorEngine engine;
-
-    /** Dosya yazma işlemini yöneten denetleyici. */
-    private final FileManager fileManager;
-
-    /** İçeriği okunacak metin alanı. */
-    private final JTextArea textArea;
-
-    /** Başlığı güncellenecek ana pencere. */
-    private final JFrame frame;
+    private final EditorEngine engine; // Uygulamanın merkezi veri modeli
+    private final FileManager fileManager; // Dosya yazma işlemini yöneten denetleyici
+    private final JTextArea textArea; // İçeriği okunacak metin alanı
+    private final JFrame frame; // Başlığı güncellenecek ana pencere
 
     /**
      * SaveCommand oluşturur.
@@ -38,10 +27,10 @@ public class SaveCommand implements Command {
      * @param frame       ana pencere
      */
     public SaveCommand(EditorEngine engine, FileManager fileManager, JTextArea textArea, JFrame frame) {
-        this.engine      = engine;
+        this.engine = engine;
         this.fileManager = fileManager;
-        this.textArea    = textArea;
-        this.frame       = frame;
+        this.textArea = textArea;
+        this.frame = frame;
     }
 
     /**

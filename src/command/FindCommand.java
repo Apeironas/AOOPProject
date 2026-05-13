@@ -6,28 +6,17 @@ import javax.swing.*;
 
 /**
  * COMMAND TASARIM DESENİ — Bul Komutu
- *
- * <p>Metin alanı içinde anahtar kelime araması yapar.
+ * Metin alanı içinde anahtar kelime araması yapar.
  * Kullanıcıdan aranacak kelimeyi alır, büyük/küçük harf duyarsız biçimde
- * arar ve bulduğu ilk eşleşmeyi seçili hale getirir.</p>
- *
- * <p>Arama işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
- *
- * @author 3. Üye
+ * arar ve bulduğu ilk eşleşmeyi seçili hale getirir.
+ * Arama işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.
  */
 public class FindCommand implements Command {
 
-    /** Uygulamanın merkezi veri modeli. */
-    private final EditorEngine engine;
-
-    /** Aramanın yapılacağı metin alanı. */
-    private final JTextArea textArea;
-
-    /** Bir önceki aramanın bittiği konum; sonraki eşleşmeye geçmek için kullanılır. */
-    private int lastFoundIndex = -1;
-
-    /** En son aranan anahtar kelime. */
-    private String lastKeyword = "";
+    private final EditorEngine engine; // Uygulamanın merkezi veri modeli
+    private final JTextArea textArea; // Aramanın yapılacağı metin alanı
+    private int lastFoundIndex = -1; // Bir önceki aramanın bittiği konum; sonraki eşleşmeye geçmek için kullanılır.
+    private String lastKeyword = ""; // En son aranan anahtar kelime.
 
     /**
      * FindCommand oluşturur.
@@ -48,16 +37,17 @@ public class FindCommand implements Command {
     @Override
     public void execute() {
         String keyword = JOptionPane.showInputDialog(null, "Aranacak kelimeyi girin:");
-        if (keyword == null || keyword.isEmpty()) return;
+        if (keyword == null || keyword.isEmpty())
+            return;
 
         String text = textArea.getText();
-        String textLower    = text.toLowerCase();
+        String textLower = text.toLowerCase();
         String keywordLower = keyword.toLowerCase();
 
         // Farklı bir kelime arandıysa baştan başla
         if (!keyword.equalsIgnoreCase(lastKeyword)) {
             lastFoundIndex = -1;
-            lastKeyword    = keyword;
+            lastKeyword = keyword;
         }
 
         // Bir sonraki eşleşmeyi bul
@@ -75,9 +65,9 @@ public class FindCommand implements Command {
             lastFoundIndex = index;
         } else {
             JOptionPane.showMessageDialog(null,
-                "\"" + keyword + "\" bulunamadı.",
-                "Bul",
-                JOptionPane.INFORMATION_MESSAGE);
+                    "\"" + keyword + "\" bulunamadı.",
+                    "Bul",
+                    JOptionPane.INFORMATION_MESSAGE);
             lastFoundIndex = -1;
         }
     }

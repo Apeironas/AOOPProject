@@ -8,28 +8,17 @@ import java.io.File;
 
 /**
  * COMMAND TASARIM DESENİ — Dosya Aç Komutu
- *
- * <p>Dosya seçim diyaloğu açarak kullanıcının seçtiği dosyayı okur
+ * Dosya seçim diyaloğu açarak kullanıcının seçtiği dosyayı okur
  * ve içeriğini metin alanına yükler. Kaydedilmemiş değişiklik varsa
- * önce kullanıcıya onay sorar.</p>
- *
- * <p>Dosya açma işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
- *
- * @author 1. Üye
+ * önce kullanıcıya onay sorar.
+ * Dosya açma işlemi geri alınamaz.
  */
 public class OpenCommand implements Command {
 
-    /** Uygulamanın merkezi veri modeli. */
-    private final EditorEngine engine;
-
-    /** Dosya okuma işlemini yöneten denetleyici. */
-    private final FileManager fileManager;
-
-    /** İçeriğin yükleneceği metin alanı. */
-    private final JTextArea textArea;
-
-    /** Başlığı güncellenecek ana pencere. */
-    private final JFrame frame;
+    private final EditorEngine engine; // Uygulamanın merkezi veri modeli
+    private final FileManager fileManager; // Dosya okuma işlemini yöneten denetleyici
+    private final JTextArea textArea; // İçeriğin yükleneceği metin alanı
+    private final JFrame frame; // Başlığı güncellenecek ana pencere
 
     /**
      * OpenCommand oluşturur.
@@ -40,10 +29,10 @@ public class OpenCommand implements Command {
      * @param frame       ana pencere
      */
     public OpenCommand(EditorEngine engine, FileManager fileManager, JTextArea textArea, JFrame frame) {
-        this.engine      = engine;
+        this.engine = engine;
         this.fileManager = fileManager;
-        this.textArea    = textArea;
-        this.frame       = frame;
+        this.textArea = textArea;
+        this.frame = frame;
     }
 
     /**
@@ -55,12 +44,12 @@ public class OpenCommand implements Command {
     public void execute() {
         if (engine.isModified()) {
             int choice = JOptionPane.showConfirmDialog(
-                frame,
-                "Kaydedilmemiş değişiklikler var. Devam etmek istiyor musunuz?",
-                "Dosya Aç",
-                JOptionPane.YES_NO_OPTION
-            );
-            if (choice != JOptionPane.YES_OPTION) return;
+                    frame,
+                    "Kaydedilmemiş değişiklikler var. Devam etmek istiyor musunuz?",
+                    "Dosya Aç",
+                    JOptionPane.YES_NO_OPTION);
+            if (choice != JOptionPane.YES_OPTION)
+                return;
         }
 
         JFileChooser chooser = new JFileChooser();

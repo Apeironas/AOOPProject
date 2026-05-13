@@ -8,28 +8,18 @@ import java.io.File;
 
 /**
  * COMMAND TASARIM DESENİ — Farklı Kaydet Komutu
- *
- * <p>Kullanıcıdan yeni bir dosya yolu seçmesini ister ve
- * belgeyi seçilen konuma kaydeder. {@link SaveCommand}'dan farklı olarak
- * her seferinde dosya seçim diyaloğu açar.</p>
- *
- * <p>Farklı kaydetme işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
- *
- * @author 1. Üye
+ * Kullanıcıdan yeni bir dosya yolu seçmesini ister ve belgeyi seçilen konuma
+ * kaydeder.
+ * {@link SaveCommand}'dan farklı olarak her seferinde dosya seçim diyaloğu
+ * açar.
+ * Farklı kaydetme işlemi geri alınamaz.
  */
 public class SaveAsCommand implements Command {
 
-    /** Uygulamanın merkezi veri modeli. */
-    private final EditorEngine engine;
-
-    /** Dosya yazma işlemini yöneten denetleyici. */
-    private final FileManager fileManager;
-
-    /** İçeriği okunacak metin alanı. */
-    private final JTextArea textArea;
-
-    /** Başlığı güncellenecek ana pencere. */
-    private final JFrame frame;
+    private final EditorEngine engine; // Uygulamanın merkezi veri modeli
+    private final FileManager fileManager; // Dosya yazma işlemini yöneten denetleyici
+    private final JTextArea textArea; // İçeriği okunacak metin alanı
+    private final JFrame frame; // Başlığı güncellenecek ana pencere
 
     /**
      * SaveAsCommand oluşturur.
@@ -40,10 +30,10 @@ public class SaveAsCommand implements Command {
      * @param frame       ana pencere
      */
     public SaveAsCommand(EditorEngine engine, FileManager fileManager, JTextArea textArea, JFrame frame) {
-        this.engine      = engine;
+        this.engine = engine;
         this.fileManager = fileManager;
-        this.textArea    = textArea;
-        this.frame       = frame;
+        this.textArea = textArea;
+        this.frame = frame;
     }
 
     /**

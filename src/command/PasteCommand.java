@@ -4,19 +4,14 @@ import javax.swing.*;
 
 /**
  * COMMAND TASARIM DESENİ — Yapıştır Komutu
- *
- * <p>Panodan metin yapıştırır. {@link JTextArea}'nın yerleşik
- * {@code paste()} metodu kullanılır.</p>
- *
- * <p>Yapıştırma işleminin geri alınması {@link model.History} (Memento)
- * sistemi aracılığıyla {@link UndoCommand} tarafından yönetilir.</p>
- *
- * @author 2. Üye
+ * Panodan metin yapıştırır. {@link JTextArea}'nın yerleşik
+ * {@code paste()} metodu kullanılır.
+ * Yapıştırma işleminin geri alınması {@link model.History} (Memento)
+ * sistemi aracılığıyla {@link UndoCommand} tarafından yönetilir.
  */
 public class PasteCommand implements Command {
 
-    /** Yapıştırma işleminin yapılacağı metin alanı. */
-    private final JTextArea textArea;
+    private final JTextArea textArea; // Yapıştırma işleminin yapılacağı metin alanı
 
     /**
      * PasteCommand oluşturur.

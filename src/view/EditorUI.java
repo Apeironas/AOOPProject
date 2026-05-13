@@ -15,38 +15,19 @@ import java.awt.event.WindowEvent;
 
 /**
  * OBSERVER TASARIM DESENİ — Ana Pencere (View)
- *
- * <p>
  * Java Swing ile oluşturulmuş ana penceredir. Menü, metin alanı
  * ve durum çubuğunu yönetir. {@link EditorObserver} uygulayarak
  * {@link EditorEngine}'deki değişiklikleri otomatik yansıtır.
- * </p>
- *
- * <p>
  * MVC mimarisinde "View" katmanını temsil eder.
- * </p>
- *
- * @author 2. Üye (GUI), 3. Üye (Memento entegrasyonu), 4. Üye (Observer)
  */
 public class EditorUI extends JFrame {
 
-    /** Satır numaralarını gösteren alan. */
-    private JTextArea lineNumbers;
-
-    /** Kullanıcının metin girdiği alan. */
-    private final JTextArea textArea;
-
-    /** Uygulamanın merkezi veri modeli (Singleton). */
-    private final EditorEngine engine;
-
-    /** Dosya okuma/yazma işlemlerini yöneten denetleyici. */
-    private final FileManager fileManager;
-
-    /** Satır, sütun ve değişiklik bilgisini gösteren durum çubuğu. */
-    private final JLabel statusBar;
-
-    /** Memento kaydı için bir önceki metin durumu. */
-    private String lastTextSnapshot;
+    private JTextArea lineNumbers; // Satır numaralarını gösteren alan.
+    private final JTextArea textArea; // Kullanıcının metin girdiği alan.
+    private final EditorEngine engine; // Uygulamanın merkekzi veri modeli (Singleton).
+    private final FileManager fileManager; // Dosya okuma/yazma işlemlerini yöneten denetleyici
+    private final JLabel statusBar; // Satır, sütun ve değişiklik bilgisini gösteren durum çubuğu.
+    private String lastTextSnapshot; // Memento kaydı için bir önceki metin durumu.
 
     /**
      * EditorUI penceresini oluşturur ve tüm bileşenleri başlatır.
@@ -82,7 +63,6 @@ public class EditorUI extends JFrame {
         statusBar.setBorder(BorderFactory.createEtchedBorder());
         statusBar.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        // Satır numaraları
         lineNumbers = new JTextArea("1");
         lineNumbers.setBackground(new Color(240, 240, 240));
         lineNumbers.setForeground(new Color(120, 120, 120));

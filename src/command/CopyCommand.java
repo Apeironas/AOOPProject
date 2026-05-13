@@ -4,18 +4,13 @@ import javax.swing.*;
 
 /**
  * COMMAND TASARIM DESENİ — Kopyala Komutu
- *
- * <p>Seçili metni panoya kopyalar. {@link JTextArea}'nın yerleşik
- * {@code copy()} metodu kullanılır.</p>
- *
- * <p>Kopyalama işlemi geri alınamaz; {@code undo()} boş bırakılmıştır.</p>
- *
- * @author 2. Üye
+ * Seçili metni panoya kopyalar. {@link JTextArea}'nın yerleşik
+ * {@code copy()} metodu kullanılır.
+ * Kopyalama işlemi geri alınamaz.
  */
 public class CopyCommand implements Command {
 
-    /** Kopyalama işleminin yapılacağı metin alanı. */
-    private final JTextArea textArea;
+    private final JTextArea textArea; // Kopyalama işleminin yapılacağı metin alanı
 
     /**
      * CopyCommand oluşturur.

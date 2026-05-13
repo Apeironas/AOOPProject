@@ -7,22 +7,19 @@ import java.awt.*;
 
 /**
  * COMMAND + MEMENTO TASARIM DESENİ — Yinele Komutu
- *
- * <p>Ctrl+Y ile tetiklenir. {@link EditorEngine#redoText} aracılığıyla
- * geri alınan durumu yeniden uygular.</p>
- *
- * @author 3. Üye
+ * Ctrl+Y ile tetiklenir. {@link EditorEngine#redoText} aracılığıyla
+ * geri alınan durumu yeniden uygular.
  */
 public class RedoCommand implements Command {
 
-    private final EditorEngine engine;
-    private final JTextArea textArea;
-    private final JFrame frame;
+    private final EditorEngine engine; // Uygulamanın merkezi veri modeli
+    private final JTextArea textArea; // İçeriğin güncelleneceği metin alanı
+    private final JFrame frame; // Pencere başlığını güncellenecek ana pencere
 
     public RedoCommand(EditorEngine engine, JTextArea textArea, JFrame frame) {
-        this.engine   = engine;
+        this.engine = engine;
         this.textArea = textArea;
-        this.frame    = frame;
+        this.frame = frame;
     }
 
     /**
@@ -40,6 +37,11 @@ public class RedoCommand implements Command {
         textArea.setCaretPosition(next.length());
     }
 
+    /**
+     * Geri al komutunu geri alınamaz.
+     */
     @Override
-    public void undo() {}
+    public void undo() {
+        // Geri al komutunu geri alınamaz.
+    }
 }

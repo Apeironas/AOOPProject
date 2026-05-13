@@ -4,13 +4,10 @@ import javax.swing.UIManager;
 
 /**
  * SimpleEditor Uygulamasının Başlangıç Noktası
- *
- * <p>Uygulamayı başlatır ve ana pencereyi ({@link EditorUI}) oluşturur.
+ * Uygulamayı başlatır ve ana pencereyi ({@link EditorUI}) oluşturur.
  * Swing bileşenlerinin güvenli şekilde oluşturulması için
  * {@link SwingUtilities#invokeLater} kullanılır; bu sayede
- * arayüz işlemleri Event Dispatch Thread (EDT) üzerinde çalışır.</p>
- *
- * @author 1. Üye
+ * arayüz işlemleri Event Dispatch Thread (EDT) üzerinde çalışır.
  */
 public class Main {
 
