@@ -26,6 +26,9 @@ import java.awt.event.WindowEvent;
  */
 public class EditorUI extends JFrame {
 
+    /** Satır numaralarını gösteren alan. */
+    private JTextArea lineNumbers;
+
     /** Kullanıcının metin girdiği alan. */
     private final JTextArea textArea;
 
@@ -75,7 +78,24 @@ public class EditorUI extends JFrame {
         statusBar.setBorder(BorderFactory.createEtchedBorder());
         statusBar.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        add(new JScrollPane(textArea), BorderLayout.CENTER);
+        // Satır numaraları
+        lineNumbers = new JTextArea("1");
+        lineNumbers.setBackground(new Color(240, 240, 240));
+        lineNumbers.setForeground(new Color(120, 120, 120));
+        lineNumbers.setEditable(false);
+        lineNumbers.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        lineNumbers.setMargin(new Insets(0, 8, 0, 8));
+
+        // Metin değişince satır numaralarını güncelle
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e)  { updateLineNumbers(lineNumbers); }
+            @Override public void removeUpdate(DocumentEvent e)  { updateLineNumbers(lineNumbers); }
+            @Override public void changedUpdate(DocumentEvent e) { updateLineNumbers(lineNumbers); }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setRowHeaderView(lineNumbers);
+        add(scrollPane, BorderLayout.CENTER);
         add(statusBar, BorderLayout.SOUTH);
     }
 
@@ -108,6 +128,33 @@ public class EditorUI extends JFrame {
         addMenuItem(editMenu, "Yapıştır", KeyEvent.VK_V, new PasteCommand(textArea));
         editMenu.addSeparator();
         addMenuItem(editMenu, "Bul...",   KeyEvent.VK_F, new FindCommand(engine, textArea));
+
+        // --- Görünüm Menüsü ---
+        JMenu viewMenu = new JMenu("Görünüm");
+
+        // Koyu Tema
+        JMenuItem darkTheme = new JMenuItem("Koyu Tema");
+        darkTheme.addActionListener(e -> applyTheme("Dark"));
+        viewMenu.add(darkTheme);
+
+        // Açık Tema
+        JMenuItem lightTheme = new JMenuItem("Açık Tema");
+        lightTheme.addActionListener(e -> applyTheme("Light"));
+        viewMenu.add(lightTheme);
+
+        viewMenu.addSeparator();
+
+        // Font Büyüt
+        JMenuItem fontUp = new JMenuItem("Yazıyı Büyüt");
+        fontUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, java.awt.event.InputEvent.CTRL_DOWN_MASK));        fontUp.addActionListener(e -> changeFontSize(2));
+        viewMenu.add(fontUp);
+
+        // Font Küçült
+        JMenuItem fontDown = new JMenuItem("Yazıyı Küçült");
+        fontDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, java.awt.event.InputEvent.CTRL_DOWN_MASK));        fontDown.addActionListener(e -> changeFontSize(-2));
+        viewMenu.add(fontDown);
+
+        menuBar.add(viewMenu);
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
@@ -192,6 +239,55 @@ public class EditorUI extends JFrame {
             String mod = engine.isModified() ? "Değiştirildi" : "Değiştirilmedi";
             statusBar.setText(" Satır: " + line + "  Sütun: " + col + "  |  " + mod);
         } catch (Exception ignored) {}
+    }
+    /**
+     * Satır numaralarını günceller.
+     */
+    private void updateLineNumbers(JTextArea lineNumbers) {
+        int lines = textArea.getLineCount();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= lines; i++) {
+            sb.append(i).append("\n");
+        }
+        lineNumbers.setText(sb.toString());
+    }
+    /**
+     * Koyu veya açık temayı uygular.
+     * @param theme "Dark" veya "Light"
+     */
+    private void applyTheme(String theme) {
+        engine.setTheme(theme);
+        if (theme.equals("Dark")) {
+            textArea.setBackground(new Color(30, 30, 30));
+            textArea.setForeground(new Color(212, 212, 212));
+            textArea.setCaretColor(Color.WHITE);
+            getContentPane().setBackground(new Color(30, 30, 30));
+            statusBar.setBackground(new Color(50, 50, 50));
+            statusBar.setForeground(new Color(212, 212, 212));
+            statusBar.setOpaque(true);
+            lineNumbers.setBackground(new Color(40, 40, 40));
+            lineNumbers.setForeground(new Color(150, 150, 150));
+        } else {
+            textArea.setBackground(Color.WHITE);
+            textArea.setForeground(Color.BLACK);
+            textArea.setCaretColor(Color.BLACK);
+            getContentPane().setBackground(Color.WHITE);
+            statusBar.setBackground(null);
+            statusBar.setForeground(Color.BLACK);
+            statusBar.setOpaque(false);
+            lineNumbers.setBackground(new Color(240, 240, 240));
+            lineNumbers.setForeground(new Color(120, 120, 120));
+        }
+    }
+    /**
+     * Font boyutunu değiştirir.
+     * @param delta artış veya azalış miktarı (punto)
+     */
+    private void changeFontSize(int delta) {
+        int newSize = engine.getFontSize() + delta;
+        if (newSize < 8 || newSize > 72) return;
+        engine.setFontSize(newSize);
+        textArea.setFont(new Font(engine.getFontFamily(), Font.PLAIN, newSize));
     }
 
     /**
