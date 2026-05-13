@@ -90,7 +90,7 @@ public class EditorEngine {
         notifyObservers();
     }
 
-    // --- Memento (Undo/Redo) API ---
+    // Memento (Undo/Redo)
 
     /**
      * Değişiklik öncesi metin durumunu undo yığınına kaydeder.
