@@ -7,11 +7,8 @@ import java.awt.*;
 
 /**
  * COMMAND + MEMENTO TASARIM DESENİ — Geri Al Komutu
- *
- * <p>Ctrl+Z ile tetiklenir. {@link EditorEngine#undoText} aracılığıyla
- * bir önceki metin durumuna döner.</p>
- *
- * @author 3. Üye (Memento entegrasyonu), 4. Üye (Engine entegrasyonu)
+ * Ctrl+Z ile tetiklenir. {@link EditorEngine#undoText} aracılığıyla
+ * bir önceki metin durumuna döner.
  */
 public class UndoCommand implements Command {
 
@@ -20,9 +17,9 @@ public class UndoCommand implements Command {
     private final JFrame frame;
 
     public UndoCommand(EditorEngine engine, JTextArea textArea, JFrame frame) {
-        this.engine   = engine;
+        this.engine = engine;
         this.textArea = textArea;
-        this.frame    = frame;
+        this.frame = frame;
     }
 
     /**
@@ -40,6 +37,11 @@ public class UndoCommand implements Command {
         textArea.setCaretPosition(previous.length());
     }
 
+    /**
+     * Geri alma işlemi geri alınamaz.
+     */
     @Override
-    public void undo() {}
+    public void undo() {
+        // Geri alma işlemi geri alınamaz.
+    }
 }
