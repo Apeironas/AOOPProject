@@ -288,6 +288,7 @@ public class EditorUI extends JFrame {
         if (newSize < 8 || newSize > 72) return;
         engine.setFontSize(newSize);
         textArea.setFont(new Font(engine.getFontFamily(), Font.PLAIN, newSize));
+lineNumbers.setFont(new Font("Monospaced", Font.PLAIN, newSize));
     }
 
     /**
